@@ -5,7 +5,11 @@ public class Notification {
     private String subject;
     private String type;
 
-    public Notification(String sender, String subject, String type){
+    public Notification() {
+
+    }
+
+    public Notification(String sender, String subject, String type) {
         this.sender = sender;
         this.subject = subject;
         this.type = type;

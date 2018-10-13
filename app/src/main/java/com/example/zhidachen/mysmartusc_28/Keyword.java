@@ -4,6 +4,10 @@ public class Keyword {
     private String keyword;
     private String checkArea;
 
+    public Keyword() {
+
+    }
+
     public Keyword(String keyword, String checkArea){
         this.keyword = keyword;
         this.checkArea = checkArea;

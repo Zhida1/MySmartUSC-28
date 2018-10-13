@@ -10,16 +10,19 @@ public class User {
 
     @PrimaryKey
     private String username;
-    private ArrayList<Keyword> keywords = new ArrayList<Keyword>();
-    private ArrayList<Notification> notifications = new ArrayList<Notification>();
+    private ArrayList<Keyword> keywords;
+    private ArrayList<Notification> notifications;
 
-    public User(){
-
+    public User() {
+        username = "";
+        keywords = new ArrayList<Keyword>();
+        notifications = new ArrayList<Notification>();
     }
 
-    public User(String username){
-
+    public User(String username) {
         this.username = username;
+        keywords = new ArrayList<Keyword>();
+        notifications = new ArrayList<Notification>();
     }
 
     public String getUsername() {
@@ -35,6 +38,14 @@ public class User {
     public ArrayList<Keyword> getKeywords() {
 
         return keywords;
+    }
+
+    public void addKeyword(String keyword, String checkArea) {
+        String[] tokens = keyword.split("\\s+");
+        for(String temp : tokens) {
+            Keyword store = new Keyword(temp, checkArea);
+            keywords.add(store);
+        }
     }
 
     public boolean checkKeyword(String keyword, String checkArea) {
@@ -56,6 +67,11 @@ public class User {
     public ArrayList<Notification> getNotifications() {
 
         return notifications;
+    }
+
+    public void addNotification(String sender, String subject, String type) {
+        Notification temp = new Notification(sender, subject, type);
+        notifications.add(temp);
     }
 
     public void setNotifications(ArrayList<Notification> notifications) {
