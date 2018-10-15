@@ -2,6 +2,7 @@ package com.example.zhidachen.mysmartusc_28;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 
@@ -9,7 +10,8 @@ import java.util.ArrayList;
 public class User {
 
     @PrimaryKey
-    private String username;
+    @NonNull private String username;
+
     private ArrayList<Keyword> keywords;
     private ArrayList<Notification> notifications;
 
