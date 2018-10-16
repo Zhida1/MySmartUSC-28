@@ -61,6 +61,19 @@ public class User {
         return false;
     }
 
+    public void removeKeyword(String keyword, String checkArea) {
+        int count = 0;
+        for(Keyword key : keywords) {
+            if(key.getKeyword().equals(keyword)){
+                if(key.getCheckArea().equals(checkArea)) {
+                    keywords.remove(count);
+                    return;
+                }
+            }
+            count += 1;
+        }
+    }
+
     public void setKeywords(ArrayList<Keyword> keywords) {
 
         this.keywords = keywords;
