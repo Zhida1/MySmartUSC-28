@@ -120,8 +120,7 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             // launch our main activity
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            //how to jump to main activity
-            Intent toDashBoardActivityIntent = new Intent(LoginActivity.this, DashboardActivity.class);
+            Intent toDashBoardActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(toDashBoardActivityIntent);
 
         }
