@@ -22,12 +22,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //User temp = new User("abc");
         fragmentManager = getSupportFragmentManager();
         appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "userDatabase").allowMainThreadQueries().build();
-        //appDatabase.appDao().addUser(temp);
         List<User> users = appDatabase.appDao().getUsers();
-        usr = users.get(0);
+        if(users.size() == 0) {
+            User temp = new User("New User");
+            usr = temp;
+            appDatabase.appDao().addUser(temp);
+        }
+        else {
+            usr = users.get(0);
+        }
         if(findViewById(R.id.fragment_container) != null) {
             if(savedInstanceState != null) {
                 return;
