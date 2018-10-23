@@ -18,18 +18,15 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -130,19 +127,19 @@ public class LoginActivity extends AppCompatActivity {
 
             HttpPost httpPost = new HttpPost("https://yourbackend.example.com/authcode");
 
+            // use tokeninfo endpoint method to authenticate
+            //send http get request
+            String tokenURL = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + idToken;
+            URL url = new URL(tokenURL);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             try {
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-                nameValuePairs.add(new BasicNameValuePair("authCode", authCode));
-                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-                HttpResponse response = httpClient.execute(httpPost);
-                int statusCode = response.getStatusLine().getStatusCode();
-                final String responseBody = EntityUtils.toString(response.getEntity());
-            } catch (ClientProtocolException e) {
-                Log.e(TAG, "Error sending auth code to backend.", e);
-            } catch (IOException e) {
-                Log.e(TAG, "Error sending auth code to backend.", e);
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                readStream(in);
+            } finally {
+                urlConnection.disconnect();
             }
+
+
             // Signed in successfully, show authenticated UI.
             updateUI(account);
 
@@ -151,6 +148,25 @@ public class LoginActivity extends AppCompatActivity {
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             updateUI(null);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String readStream(InputStream is) {
+        try {
+            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+            int i = is.read();
+            while (i != -1) {
+                bo.write(i);
+                i = is.read();
+            }
+            Log.w("HTTP return: ", bo.toString());
+            return bo.toString();
+        } catch (IOException e) {
+            return "";
         }
     }
 
