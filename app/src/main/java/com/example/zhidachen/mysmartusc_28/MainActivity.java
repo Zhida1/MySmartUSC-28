@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
-        fragmentManager.beginTransaction().add(R.id.fragment_container, new DashboardActivity()).commit();
+        fragmentManager.beginTransaction().add(R.id.fragment_container, new DashboardActivity(), "DashboardLayout").commit();
 
 
         redirect_loginBn = (Button) findViewById(R.id.Login_Button);
