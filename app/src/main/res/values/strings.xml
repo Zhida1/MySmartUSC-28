@@ -3,6 +3,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="server_client_id">279365372965-1d0jcpld8vrhf5d5vtigfhb2dio6ag6c.apps.googleusercontent.com</string>
     <string-array name="areasforcheck">
         <item>Sender</item>
         <item>Subject</item>

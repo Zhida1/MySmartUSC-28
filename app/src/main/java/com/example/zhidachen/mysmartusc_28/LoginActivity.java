@@ -6,22 +6,40 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
     protected SignInButton LoginWithGoogle;
+    protected Button testingBn;
     protected GoogleSignInClient mGoogleSignInClient;
     private static final String TAG = "SignInActivity";
     // what the hell is 9001?
     private static final int RC_SIGN_IN = 9001;
+    //protected String server_client_id = "279365372965-1d0jcpld8vrhf5d5vtigfhb2dio6ag6c.apps.googleusercontent.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +48,18 @@ public class LoginActivity extends AppCompatActivity {
 
         // Configure sign-in to request the user's ID, email address, and basic
 // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        // request access scopes
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.server_client_id))
+                .requestScopes(new Scope(Scopes.EMAIL))
+                .requestServerAuthCode(getString(R.string.server_client_id))
                 .requestEmail()
                 .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
         //GoogleSignInClient user = GoogleSignIn.getClient(this, gso);
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
 
         LoginWithGoogle = (SignInButton) findViewById(R.id.sign_in_button);
         LoginWithGoogle.setOnClickListener(new View.OnClickListener() {
@@ -102,9 +125,27 @@ public class LoginActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            String idToken = account.getIdToken();
+            String authCode = account.getServerAuthCode();
 
+            HttpPost httpPost = new HttpPost("https://yourbackend.example.com/authcode");
+
+            try {
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+                nameValuePairs.add(new BasicNameValuePair("authCode", authCode));
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                HttpResponse response = httpClient.execute(httpPost);
+                int statusCode = response.getStatusLine().getStatusCode();
+                final String responseBody = EntityUtils.toString(response.getEntity());
+            } catch (ClientProtocolException e) {
+                Log.e(TAG, "Error sending auth code to backend.", e);
+            } catch (IOException e) {
+                Log.e(TAG, "Error sending auth code to backend.", e);
+            }
             // Signed in successfully, show authenticated UI.
             updateUI(account);
+
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
