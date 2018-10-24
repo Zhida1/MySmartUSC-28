@@ -1,13 +1,18 @@
 package com.example.zhidachen.mysmartusc_28;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     public Button redirect_loginBn;
 
 
-
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
             User temp = new User("New User");
             usr = temp;
             appDatabase.appDao().addUser(temp);
-        }
-        else {
+        } else {
             usr = users.get(0);
         }
         if(findViewById(R.id.fragment_container) != null) {
@@ -40,6 +44,15 @@ public class MainActivity extends AppCompatActivity {
         }
         fragmentManager.beginTransaction().add(R.id.fragment_container, new DashboardActivity()).commit();
 
+
+        // Temp Notification
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(calendar.SECOND, 5);
+
+        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+        PendingIntent broadcast = PendingIntent.getBroadcast(this, 100, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), broadcast);
 
         redirect_loginBn = (Button) findViewById(R.id.Login_Button);
         redirect_loginBn.setOnClickListener(new View.OnClickListener() {

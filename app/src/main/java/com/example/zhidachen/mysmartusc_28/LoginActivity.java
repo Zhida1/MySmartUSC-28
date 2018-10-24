@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -18,25 +17,20 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
 
-import org.apache.http.client.methods.HttpPost;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.BufferedReader;
 
 public class LoginActivity extends AppCompatActivity {
 
     protected SignInButton LoginWithGoogle;
-    protected Button testingBn;
+    //protected Button testingBn;
     protected GoogleSignInClient mGoogleSignInClient;
     private static final String TAG = "SignInActivity";
     // what the hell is 9001?
     private static final int RC_SIGN_IN = 9001;
     //protected String server_client_id = "279365372965-1d0jcpld8vrhf5d5vtigfhb2dio6ag6c.apps.googleusercontent.com";
+
+    //buffer reader from HTTP get request
+    BufferedReader br;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,19 +119,26 @@ public class LoginActivity extends AppCompatActivity {
             String idToken = account.getIdToken();
             String authCode = account.getServerAuthCode();
 
-            HttpPost httpPost = new HttpPost("https://yourbackend.example.com/authcode");
+//            HttpPost httpPost = new HttpPost("https://yourbackend.example.com/authcode");
 
             // use tokeninfo endpoint method to authenticate
             //send http get request
-            String tokenURL = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + idToken;
-            URL url = new URL(tokenURL);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            try {
-                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                readStream(in);
-            } finally {
-                urlConnection.disconnect();
-            }
+//            String tokenURL = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + idToken;
+//            URL url = new URL(tokenURL);
+//            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+//            urlConnection.connect();
+//            try {
+//                InputStream stream = urlConnection.getInputStream();
+//                br = new BufferedReader(new InputStreamReader(stream));
+//
+//
+//
+//
+//
+//                readStream(br);
+//            } finally {
+//                urlConnection.disconnect();
+//            }
 
 
             // Signed in successfully, show authenticated UI.
@@ -148,27 +149,31 @@ public class LoginActivity extends AppCompatActivity {
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             updateUI(null);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+// catch (MalformedURLException e) {
+//            Log.w("Malformed Exception**: ", "cao...");
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            Log.w("IOException: !!!!", "caoni....");
+//            e.printStackTrace();
+//        }
     }
-
-    private String readStream(InputStream is) {
-        try {
-            ByteArrayOutputStream bo = new ByteArrayOutputStream();
-            int i = is.read();
-            while (i != -1) {
-                bo.write(i);
-                i = is.read();
-            }
-            Log.w("HTTP return: ", bo.toString());
-            return bo.toString();
-        } catch (IOException e) {
-            return "";
-        }
-    }
+//
+//    private String readStream(BufferedReader is) {
+//        try {
+//
+//            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+//            int i = is.read();
+//            while (i != -1) {
+//                bo.write(i);
+//                i = is.read();
+//            }
+//            Log.w("HTTP return: ", bo.toString());
+//            return bo.toString();
+//        } catch (IOException e) {
+//            return "";
+//        }
+//    }
 
     protected void updateUI(@Nullable GoogleSignInAccount account) {
         if (account == null) {
