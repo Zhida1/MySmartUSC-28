@@ -104,30 +104,6 @@ public class TestUserLoopCoverage {
         }
         assertEquals(true, flag);
     }
-    @Test
-    public void testCheckKeyword6() {
-        boolean flag = false;
-        flag = usr.checkKeyword("1", "test");
-        assertEquals(true, flag);
-    }
-    @Test
-    public void testCheckKeyword7() {
-        boolean flag = false;
-        flag = usr.checkKeyword("1", "test1");
-        assertEquals(false, flag);
-    }
-    @Test
-    public void testCheckKeyword8() {
-        boolean flag = false;
-        flag = usr.checkKeyword("21", "test");
-        assertEquals(false, flag);
-    }
-    @Test
-    public void testCheckKeyword9() {
-        boolean flag = false;
-        flag = usr.checkKeyword("21", "test1");
-        assertEquals(false, flag);
-    }
 
     @Test
     public void testRemoveKeyword1() {
@@ -171,25 +147,5 @@ public class TestUserLoopCoverage {
             flag = false;
         }
         assertEquals(true, flag);
-    }
-    @Test
-    public void testRemoveKeyword6() {
-        usr.removeKeyword("1", "test");
-        assertEquals(19, usr.getKeywords().size());
-    }
-    @Test
-    public void testRemoveKeyword7() {
-        usr.removeKeyword("1", "test1");
-        assertEquals(20, usr.getKeywords().size());
-    }
-    @Test
-    public void testRemoveKeyword8() {
-        usr.removeKeyword("21", "test");
-        assertEquals(20, usr.getKeywords().size());
-    }
-    @Test
-    public void testRemoveKeyword9() {
-        usr.removeKeyword("21", "test1");
-        assertEquals(20, usr.getKeywords().size());
     }
 }
