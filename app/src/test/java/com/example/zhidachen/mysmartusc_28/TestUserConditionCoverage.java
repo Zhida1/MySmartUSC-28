@@ -16,6 +16,21 @@ public class TestUserConditionCoverage {
     }
 
     @Test
+    public void testAddKeyword1() {
+        boolean flag = false;
+        usr.addKeyword("", "test");
+        flag = usr.checkKeyword("", "test");
+        assertEquals(false, flag);
+    }
+    @Test
+    public void testAddKeyword2() {
+        boolean flag = false;
+        usr.addKeyword("21", "test");
+        flag = usr.checkKeyword("21", "test");
+        assertEquals(true, flag);
+    }
+
+    @Test
     public void testCheckKeyword1() {
         boolean flag = false;
         flag = usr.checkKeyword("1", "test");
