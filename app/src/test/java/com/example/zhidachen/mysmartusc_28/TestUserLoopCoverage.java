@@ -9,10 +9,12 @@ import static org.junit.Assert.assertEquals;
 
 public class TestUserLoopCoverage {
     User usr;
+    User usr1;
 
     @Before
     public void setup() {
         usr = new User("New User");
+        usr1 = new User("New User1");
         for(int i = 0; i < 20; i++) {
             usr.addKeyword(Integer.toString(i+1), "test");
         }
@@ -69,7 +71,7 @@ public class TestUserLoopCoverage {
     @Test
     public void testCheckKeyword1() {
         boolean flag = false;
-        flag = usr.checkKeyword("25", "test");
+        flag = usr1.checkKeyword("25", "test");
         assertEquals(false, flag);
     }
     @Test
@@ -107,8 +109,8 @@ public class TestUserLoopCoverage {
 
     @Test
     public void testRemoveKeyword1() {
-        usr.removeKeyword("25", "test");
-        assertEquals(20, usr.getKeywords().size());
+        usr1.removeKeyword("25", "test");
+        assertEquals(0, usr1.getKeywords().size());
     }
     @Test
     public void testRemoveKeyword2() {
