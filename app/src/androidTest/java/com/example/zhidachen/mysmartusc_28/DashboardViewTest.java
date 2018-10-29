@@ -44,7 +44,6 @@ public class DashboardViewTest {
     @Test
     public void testViewKeywordsBn() {
         onView(withId(R.id.to_view_keywords)).perform(click());
-        //onView(withId(R.id.));
         onView(withId(R.id.display_keyword_textview))
                 .check(matches(isDisplayed()));
 
@@ -53,6 +52,7 @@ public class DashboardViewTest {
     @Test
     public void testAddKeywordsBn() {
         onView(withId(R.id.to_add_keyword)).perform(click());
+        onView(withId(R.id.user_input)).check(matches(isDisplayed()));
     }
 
     private Activity getActivityInstance(){
