@@ -27,7 +27,7 @@ public class ViewKeywordActivity extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.viewkeyword_activity, container, false);
-        displayKeyword = view.findViewById(R.id.display_keyword);
+        displayKeyword = view.findViewById(R.id.display_keyword_textview);
         ArrayList<Keyword> keywords = MainActivity.usr.getKeywords();
         String info = "";
         for(Keyword temp : keywords) {
@@ -36,5 +36,4 @@ public class ViewKeywordActivity extends Fragment {
         displayKeyword.setText(info);
         return view;
     }
-
 }
