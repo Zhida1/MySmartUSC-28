@@ -10,15 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
-import android.widget.Adapter;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -54,6 +45,9 @@ public class PreferenceActivity extends Fragment {
            public void onClick(View view) {
                String keyword = userInput.getText().toString();
                String checkArea = spinner.getSelectedItem().toString();
+               if (keyword.equals(" ") || keyword.equals("")) {
+                   Toast.makeText(getActivity(), "Invalid keyword", Toast.LENGTH_SHORT).show();
+               }
                if(!MainActivity.usr.checkKeyword(keyword, checkArea)) {
                    MainActivity.usr.addKeyword(keyword, checkArea);
                    MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
