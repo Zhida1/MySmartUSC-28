@@ -47,8 +47,7 @@ public class PreferenceActivity extends Fragment {
                String checkArea = spinner.getSelectedItem().toString();
                if (keyword.equals(" ") || keyword.equals("")) {
                    Toast.makeText(getActivity(), "Invalid keyword", Toast.LENGTH_SHORT).show();
-               }
-               if(!MainActivity.usr.checkKeyword(keyword, checkArea)) {
+               } else if (!MainActivity.usr.checkKeyword(keyword, checkArea)) {
                    MainActivity.usr.addKeyword(keyword, checkArea);
                    MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
                    Toast.makeText(getActivity(), "Keyword has been added", Toast.LENGTH_SHORT).show();
