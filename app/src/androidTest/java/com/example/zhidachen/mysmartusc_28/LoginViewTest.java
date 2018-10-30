@@ -17,10 +17,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @LargeTest
 public class LoginViewTest {
 
-    @Test
-    public void tapGoogleSignin() {
-        onView(withId(R.id.sign_in_button)).perform(click());
-    }
+
 
     @Test
     public void testNoSignin() {
