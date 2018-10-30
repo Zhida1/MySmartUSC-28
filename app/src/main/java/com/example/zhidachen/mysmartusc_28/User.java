@@ -43,10 +43,15 @@ public class User {
     }
 
     public void addKeyword(String keyword, String checkArea) {
-        String[] tokens = keyword.split("\\s+");
-        for(String temp : tokens) {
-            Keyword store = new Keyword(temp, checkArea);
-            keywords.add(store);
+        if(keyword.equals("")) {
+            return;
+        }
+        else {
+            String [] tokens = keyword.split("\\s+");
+            for(String temp : tokens) {
+                Keyword store = new Keyword(temp, checkArea);
+                keywords.add(store);
+            }
         }
     }
 

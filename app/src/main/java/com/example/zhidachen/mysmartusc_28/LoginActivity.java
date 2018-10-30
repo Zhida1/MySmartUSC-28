@@ -73,6 +73,14 @@ public class LoginActivity extends AppCompatActivity {
 //                }
 //            }
 //        });
+        Button DebugButton = (Button) findViewById(R.id.without_signin_forTesting);
+        DebugButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toDashBoardActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(toDashBoardActivityIntent);
+            }
+        });
     }
 
 //    protected void onStart() {
