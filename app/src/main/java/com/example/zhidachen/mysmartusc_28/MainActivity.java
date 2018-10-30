@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     public static FragmentManager fragmentManager;
     public static User usr;
     public Button redirect_loginBn;
-    NotificationManager notificationManager;
+    public NotificationManager notificationManager;
     private final String CHANNEL_ID = "MySmartSC_Notification";
     private final String CHANNEL_Name = "MySmartSC";
     private final int NOTIFICATION_ID = 001;
