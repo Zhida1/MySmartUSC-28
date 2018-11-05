@@ -51,6 +51,11 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
+
+        // temporary notification
+        displayNotification("Welcome! " + usr.getUsername() + ".", "Demoing Notification Feature");
+        // end of temp notification
+
         fragmentManager.beginTransaction().add(R.id.fragment_container, new DashboardActivity(), "DashboardLayout").commit();
 
 
@@ -81,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(content));
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         notificationManager.notify(new Random().nextInt(), builder.build());
+        // push into notification
+        usr.addNotification("Sender", title, "Type");
+        // end of notification
     }
 
     private void creatNotificationChannel() {
