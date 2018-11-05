@@ -199,6 +199,8 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject(response.body().string());
                         final String message = jsonObject.toString(5);
                         Log.i("Response: ", message);
+
+                        
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -233,7 +235,7 @@ public class LoginActivity extends AppCompatActivity {
             usr = users.get(0);
             usr.setUsername(acct.getGivenName());
         }
-    }
+    } // end of AddUserToDatabase method
 
 
     protected void updateUI(@Nullable GoogleSignInAccount account) {
@@ -245,8 +247,7 @@ public class LoginActivity extends AppCompatActivity {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             Intent toDashBoardActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(toDashBoardActivityIntent);
-
         }
-    }
-    
+    } // end of updateUI method
+
 }
