@@ -15,6 +15,12 @@ public class User {
     private ArrayList<Keyword> keywords;
     private ArrayList<Notification> notifications;
 
+//    public String access_token;
+//    public int expires_in;
+//    public String scope;
+//    public String token_type;
+//    public String id_token;
+
     public User() {
         username = "";
         keywords = new ArrayList<Keyword>();
@@ -98,4 +104,5 @@ public class User {
 
         this.notifications = notifications;
     }
+
 }
