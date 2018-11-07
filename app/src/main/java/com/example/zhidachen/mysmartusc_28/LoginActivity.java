@@ -22,9 +22,13 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
+import com.google.api.client.repackaged.org.apache.commons.codec.binary.StringUtils;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.ListMessagesResponse;
+import com.google.api.services.gmail.model.Message;
+import com.google.api.services.gmail.model.MessagePart;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -201,27 +205,21 @@ public class LoginActivity extends AppCompatActivity {
                         //.setRefreshToken(refreshToken)
 
 
-                        //                 ------------------Google's fking way of calling Gmail API & Getting user email ------------
+                        //------------------Google's fking way of calling Gmail API & Getting user email ------------
 
-
-                        //final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-//                            Log.w("Connecting to Gmail...","Before Connecting");
                         final NetHttpTransport HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport();
-
-//                        Log.w("Connecting to Gmail...","After Connecting");
 
                         Gmail service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
                                 .setApplicationName("MySmartUSC28")
                                 .build();
-//                        Log.w("Connecting to Gmail...","Before getting email");
+
                         ListMessagesResponse gmail_response = service.users()
                                 .messages()
                                 .list("me")
                                 .setMaxResults(Long.valueOf(20))
                                 .execute();
-                        List<com.google.api.services.gmail.model.Message> messages = new ArrayList<>();
 
-//                        Log.w("Connecting to Gmail...","After getting email!!!!!!");
+                        List<com.google.api.services.gmail.model.Message> messages = new ArrayList<>();
 
                         while (gmail_response.getMessages() != null) {
                             messages.addAll(gmail_response.getMessages());
@@ -233,9 +231,18 @@ public class LoginActivity extends AppCompatActivity {
                                 break;
                             }
                         }
+                        Log.w("No. of gmail msgs: ", String.valueOf(messages.size()));
+                        for (int i = 0; i < 5; i++) {
+                            String userId = messages.get(i).getId();
+                            //String messageId = messages.get(i).getThreadId();
+                            // Log.w("Gmail Message!!!: ", messages.get(i).getId());
+                            Message single_message = service.users().messages().get("me", userId).execute();
+                            Log.w("Inside:", single_message.toString());
+                            MessagePart part = single_message.getPayload();
 
-                        for (int i = 0; i < messages.size(); i++) {
-                            Log.w("Gmail Message!!!: ", messages.get(i).toString());
+                            Log.w("Inside Gmail message:", StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getPayload().getParts().get(0).getBody().getData())));
+
+                            //Log.w("Inside Gmail message:", StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getRaw()))); need to call setFormat("raw")
                         }
 
 
@@ -244,12 +251,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
             });
-
-            // ------------------ call API -----------------------
-//           Log.w("ID token: ", usr.id_token);
-
-
-            // ------------------ call API -----------------------
 
             // Signed in successfully, show authenticated UI.
             updateUI(account);
@@ -261,7 +262,7 @@ public class LoginActivity extends AppCompatActivity {
             updateUI(null);
         }
 
-    }
+    } // end of handleSignInResult method
 
     private void ExchangeAuthCodeForAccessToken(String authCode, String idToken) {
         // Exchange auth code for access token
