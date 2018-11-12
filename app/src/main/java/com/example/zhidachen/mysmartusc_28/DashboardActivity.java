@@ -53,12 +53,7 @@ public class DashboardActivity extends Fragment implements View.OnClickListener 
 
         // settings for display notification
         displayNotification = view.findViewById(R.id.display_notification);
-        ArrayList<Notification> keywords = MainActivity.usr.getNotifications();
-        String info = "";
-        for(Notification temp : keywords) {
-            info += "\n\n" + "New Email from: " + temp.getSender() + "\nSubject: " + temp.getSubject() + "\nType: " + temp.getType();
-        }
-        displayNotification.setText(info);
+        RefreshLayout();
         return view;
 
     }
