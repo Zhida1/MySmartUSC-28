@@ -4,6 +4,7 @@ public class Notification {
     private String sender;
     private String subject;
     private String type;
+    private String emailId;
 
     public Notification() {
 
@@ -27,6 +28,13 @@ public class Notification {
         return type;
     }
 
+    public String getEmailId() {
+        if (emailId != null) {
+            return this.emailId;
+        }
+        return "";
+    }
+
     public void setSender(String sender) {
         this.sender = sender;
     }
@@ -37,5 +45,9 @@ public class Notification {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setEmailId(String emailId) {
+        this.emailId = emailId;
     }
 }

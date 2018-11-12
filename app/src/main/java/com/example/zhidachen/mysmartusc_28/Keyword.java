@@ -28,4 +28,5 @@ public class Keyword {
     public void setCheckArea(String checkArea) {
         this.checkArea = checkArea;
     }
+
 }

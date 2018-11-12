@@ -16,4 +16,8 @@
     <string name="add_keyword">Add Keyword</string>
     <string name="textview">TextView</string>
     <string name="view_keywords">View Keywords</string>
+
+    <string name="title_activity_starter">StarterActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

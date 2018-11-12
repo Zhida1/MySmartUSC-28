@@ -29,6 +29,7 @@ import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.MessagePart;
+import com.google.api.services.gmail.model.MessagePartHeader;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -205,8 +206,6 @@ public class LoginActivity extends AppCompatActivity {
                         //.setRefreshToken(refreshToken)
 
 
-                        //------------------Google's fking way of calling Gmail API & Getting user email ------------
-
                         final NetHttpTransport HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport();
 
                         Gmail service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
@@ -234,15 +233,66 @@ public class LoginActivity extends AppCompatActivity {
                         Log.w("No. of gmail msgs: ", String.valueOf(messages.size()));
                         for (int i = 0; i < 5; i++) {
                             String userId = messages.get(i).getId();
-                            //String messageId = messages.get(i).getThreadId();
-                            // Log.w("Gmail Message!!!: ", messages.get(i).getId());
+                            String emailId = messages.get(i).getId();
+                            String sender = "";
+                            String subject = "";
+                            String type = "";
+                            String content = "";
+
+                            // get single message
                             Message single_message = service.users().messages().get("me", userId).execute();
-                            Log.w("Inside:", single_message.toString());
                             MessagePart part = single_message.getPayload();
+                            Log.w("Inside:", single_message.toString());
 
-                            Log.w("Inside Gmail message:", StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getPayload().getParts().get(0).getBody().getData())));
+                            // read, decode email content --> store it into content
+                            if (single_message.toString().contains("payload\":{\"body\":{\"data")) {
+                                byte[] bodyBytes = Base64.decodeBase64(single_message.getPayload().getBody().getData());
+                                String bd = new String(bodyBytes, "UTF-8");
+                                content = bd;
+                                Log.w("Inside Gmail UPDATES: ", content);
+                            } else {
+                                String msg = StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getPayload().getParts().get(0).getBody().getData()));
+                                content = msg;
+                                Log.w("Inside Gmail message:", content);
+                                //Log.w("Inside Gmail message:", StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getRaw()))); need to call setFormat("raw")
 
-                            //Log.w("Inside Gmail message:", StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getRaw()))); need to call setFormat("raw")
+                                // get sender from header
+                                List<MessagePartHeader> headers = single_message.getPayload().getHeaders();
+                                boolean gotSubject = false;
+                                boolean gotSender = false;
+                                for (int j = 0; j < headers.size(); j++) {
+                                    if (headers.get(j).getName().equals("From")) {
+                                        sender = headers.get(j).getValue();
+                                        Log.w("Header: ", sender);
+                                        gotSender = true;
+                                    }
+                                    if (headers.get(j).getName().equals("Subject")) {
+                                        subject = headers.get(j).getValue();
+                                        gotSubject = true;
+                                    }
+                                    if (gotSender && gotSubject) {
+                                        break;
+                                    }
+
+//                                    Log.w("Header: ", headers.get(j).toString());
+                                }
+
+                            } // end of else
+
+                            // check if match keywords
+                            Keyword kw = MainActivity.usr.containsKeyword(content);
+                            if (kw != null) {
+                                MainActivity.usr.addNotification(sender, subject, kw.getCheckArea());
+                            }
+                            MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
+
+
+                            // addNotificationToDatabase(single_message);
+
+
+                            //MainActivity.usr.addNotification(String sender, String subject, String type);
+                            //MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
+
                         }
 
 
@@ -264,54 +314,10 @@ public class LoginActivity extends AppCompatActivity {
 
     } // end of handleSignInResult method
 
-    private void ExchangeAuthCodeForAccessToken(String authCode, String idToken) {
-        // Exchange auth code for access token
-        // convert client_secret json into InputStream, InputStreamReader, GoogleClientSecrets object
-        InputStream isClientSecret = getResources().openRawResource(R.raw.client_secret);
-        InputStreamReader isrClientSecret = new InputStreamReader(isClientSecret, Charset.forName("UTF-8"));
+    private void addNotificationToDatabase(Message single_message) {
 
-        try {
-            clientSecrets =
-                    GoogleClientSecrets.load(
-                            JacksonFactory.getDefaultInstance(), isrClientSecret);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    }
 
-        OkHttpClient client = new OkHttpClient();
-        RequestBody body = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("grant_type", "authorization_code")
-                .addFormDataPart("client_id", clientSecrets.getDetails().getClientId())
-                .addFormDataPart("client_secret", clientSecrets.getDetails().getClientSecret())
-                .addFormDataPart("code", authCode)
-                .addFormDataPart("redirect_url", "")
-                .addFormDataPart("id_token", idToken)
-                .build();
-
-        final Request request = new Request.Builder()
-                .url("https://www.googleapis.com/oauth2/v4/token")
-                .post(body)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.w("Fail: ", "Unable to get response");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    JSONObject authorization = new JSONObject(response.body().string());
-                    final String message = authorization.toString(5);
-                    Log.i("Response: ", message);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    } // end of ExchangeAuthCodeForAccessToken method
 
     private void AddUserToDatabase(GoogleSignInAccount acct) {
         AppDatabase appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "userDatabase").allowMainThreadQueries().build();

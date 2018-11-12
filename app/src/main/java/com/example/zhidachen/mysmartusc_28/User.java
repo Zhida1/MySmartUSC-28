@@ -105,4 +105,13 @@ public class User {
         this.notifications = notifications;
     }
 
+    public Keyword containsKeyword(String emailContent) {
+        for (int i = 0; i < keywords.size(); i++) {
+            if (emailContent.contains(keywords.get(i).getKeyword())) {
+                return keywords.get(i);
+            }
+        }
+        return null;
+    }
+
 }
