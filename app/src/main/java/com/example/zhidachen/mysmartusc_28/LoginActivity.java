@@ -280,7 +280,7 @@ public class LoginActivity extends AppCompatActivity {
                             } // end of else
 
                             // check if match keywords
-                            Keyword kw = MainActivity.usr.containsKeyword(content);
+                            Keyword kw = MainActivity.usr.containsNotifKeyword(content);
                             if (kw != null) {
                                 MainActivity.usr.addNotification(sender, subject, kw.getCheckArea());
                             }

@@ -12,7 +12,8 @@ public class User {
     @PrimaryKey
     @NonNull private String username;
 
-    private ArrayList<Keyword> keywords;
+    private ArrayList<Keyword> notifKeywords;
+    private ArrayList<Keyword> markFavKeywords;
     private ArrayList<Notification> notifications;
 
 //    public String access_token;
@@ -23,13 +24,15 @@ public class User {
 
     public User() {
         username = "";
-        keywords = new ArrayList<Keyword>();
+        notifKeywords = new ArrayList<Keyword>();
+        markFavKeywords = new ArrayList<Keyword>();
         notifications = new ArrayList<Notification>();
     }
 
     public User(String username) {
         this.username = username;
-        keywords = new ArrayList<Keyword>();
+        notifKeywords = new ArrayList<Keyword>();
+        markFavKeywords = new ArrayList<Keyword>();
         notifications = new ArrayList<Notification>();
     }
 
@@ -43,10 +46,6 @@ public class User {
         this.username = username;
     }
 
-    public ArrayList<Keyword> getKeywords() {
-
-        return keywords;
-    }
 
     public void addKeyword(String keyword, String checkArea) {
         if(keyword.equals("")) {
@@ -56,16 +55,32 @@ public class User {
             String [] tokens = keyword.split("\\s+");
             for(String temp : tokens) {
                 Keyword store = new Keyword(temp, checkArea);
-                keywords.add(store);
+                if(checkArea.equals("Career")) {
+                    markFavKeywords.add(store);
+                }
+                else {
+                    notifKeywords.add(store);
+                }
             }
         }
     }
 
     public boolean checkKeyword(String keyword, String checkArea) {
-        for(Keyword key : keywords) {
-            if(key.getKeyword().equals(keyword)){
-                if(key.getCheckArea().equals(checkArea)) {
-                    return true;
+        if(checkArea.equals("Career")) {
+            for(Keyword key : markFavKeywords) {
+                if(key.getKeyword().equals(keyword)){
+                    if(key.getCheckArea().equals(checkArea)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        else {
+            for(Keyword key : notifKeywords) {
+                if(key.getKeyword().equals(keyword)){
+                    if(key.getCheckArea().equals(checkArea)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -74,20 +89,27 @@ public class User {
 
     public void removeKeyword(String keyword, String checkArea) {
         int count = 0;
-        for(Keyword key : keywords) {
-            if(key.getKeyword().equals(keyword)){
-                if(key.getCheckArea().equals(checkArea)) {
-                    keywords.remove(count);
-                    return;
+        if (checkArea.equals("Career")) {
+            for (Keyword key : markFavKeywords) {
+                if (key.getKeyword().equals(keyword)) {
+                    if (key.getCheckArea().equals(checkArea)) {
+                        markFavKeywords.remove(count);
+                        return;
+                    }
                 }
+                count += 1;
             }
-            count += 1;
+        } else {
+            for (Keyword key : notifKeywords) {
+                if (key.getKeyword().equals(keyword)) {
+                    if (key.getCheckArea().equals(checkArea)) {
+                        notifKeywords.remove(count);
+                        return;
+                    }
+                }
+                count += 1;
+            }
         }
-    }
-
-    public void setKeywords(ArrayList<Keyword> keywords) {
-
-        this.keywords = keywords;
     }
 
     public ArrayList<Notification> getNotifications() {
@@ -105,13 +127,41 @@ public class User {
         this.notifications = notifications;
     }
 
-    public Keyword containsKeyword(String emailContent) {
-        for (int i = 0; i < keywords.size(); i++) {
-            if (emailContent.contains(keywords.get(i).getKeyword())) {
-                return keywords.get(i);
+    public Keyword containsNotifKeyword(String emailContent) {
+        for (int i = 0; i < notifKeywords.size(); i++) {
+            if (emailContent.contains(notifKeywords.get(i).getKeyword())) {
+                return notifKeywords.get(i);
             }
         }
         return null;
     }
 
+    public Keyword containsMarkFavKeyword(String emailContent) {
+        for (int i = 0; i < markFavKeywords.size(); i++) {
+            if (emailContent.contains(markFavKeywords.get(i).getKeyword())) {
+                return markFavKeywords.get(i);
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<Keyword> getNotifKeywords()
+    {
+        return notifKeywords;
+    }
+
+    public void setNotifKeywords(ArrayList<Keyword> notifKeywords)
+    {
+        this.notifKeywords = notifKeywords;
+    }
+
+    public ArrayList<Keyword> getMarkFavKeywords()
+    {
+        return markFavKeywords;
+    }
+
+    public void setMarkFavKeywords(ArrayList<Keyword> markFavKeywords)
+    {
+        this.markFavKeywords = markFavKeywords;
+    }
 }
