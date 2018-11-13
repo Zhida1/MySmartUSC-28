@@ -1,6 +1,7 @@
 package com.example.zhidachen.mysmartusc_28;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -24,10 +25,7 @@ public class MainActivity extends AppCompatActivity {
     public static FragmentManager fragmentManager;
     public static User usr;
     public Button redirect_loginBn;
-    public NotificationManager notificationManager;
-    private final String CHANNEL_ID = "MySmartSC_Notification";
-    private final String CHANNEL_Name = "MySmartSC";
-    private final int NOTIFICATION_ID = 001;
+    public AppNotification appNotification;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -35,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        creatNotificationChannel();
+        appNotification = new AppNotification(this);
         fragmentManager = getSupportFragmentManager();
         appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "userDatabase").allowMainThreadQueries().build();
         List<User> users = appDatabase.appDao().getUsers();
@@ -53,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // temporary notification
-        displayNotification("Welcome! " + usr.getUsername() + ".", "Demoing Notification Feature");
+        Notification.Builder builder = appNotification.getAppChannelNotification("Welcome! " + usr.getUsername() + ".", "Demoing Notification Feature");
+        appNotification.getManager().notify(new Random().nextInt(), builder.build());
         // end of temp notification
 
         fragmentManager.beginTransaction().add(R.id.fragment_container, new DashboardActivity(), "DashboardLayout").commit();
@@ -77,28 +76,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void displayNotification(String title, String content) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
-        builder.setSmallIcon(R.drawable.ic_more_black_24dp);
-        builder.setContentTitle(title);
-        builder.setContentText(content);
-        builder.setStyle(new NotificationCompat.BigTextStyle().bigText(content));
-        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        notificationManager.notify(new Random().nextInt(), builder.build());
-        // push into notification
-        usr.addNotification("Sender", title, "Type");
-        // end of notification
-    }
-
-    private void creatNotificationChannel() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String description = "Include all personal notifications";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_Name, importance);
-            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.createNotificationChannel(notificationChannel);
-        }
-    }
-
 }

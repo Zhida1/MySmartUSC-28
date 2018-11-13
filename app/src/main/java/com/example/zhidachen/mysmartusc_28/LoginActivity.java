@@ -1,5 +1,6 @@
 package com.example.zhidachen.mysmartusc_28;
 
+import android.app.Notification;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -67,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
     protected GoogleClientSecrets clientSecrets;
     // Authorization JSON file (include access token)
     protected AccessTokenJSON authorizationObject;
+    private AppNotification appNotification;
 
     // Our own variables (including database, buttons, etc.)
     //User
@@ -76,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        appNotification = new AppNotification(this);
 
         // Configure Google sign-in
         // Upon success, we have access to: user ID, email, basic profile
@@ -285,6 +289,8 @@ public class LoginActivity extends AppCompatActivity {
                                 MainActivity.usr.addNotification(sender, subject, kw.getCheckArea());
                             }
                             MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
+                            Notification.Builder builder = appNotification.getAppChannelNotification(sender, subject);
+                            appNotification.getManager().notify(new Random().nextInt(), builder.build());
 
 
                             // addNotificationToDatabase(single_message);

@@ -28,8 +28,12 @@ public class ViewKeywordActivity extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.viewkeyword_activity, container, false);
         displayKeyword = view.findViewById(R.id.display_keyword_textview);
-        ArrayList<Keyword> keywords = MainActivity.usr.getKeywords();
+        ArrayList<Keyword> keywords = MainActivity.usr.getNotifKeywords();
         String info = "";
+        for(Keyword temp : keywords) {
+            info += "\n\n" + "Keyword: " + temp.getKeyword() + "\nCheck On: " + temp.getCheckArea();
+        }
+        keywords = MainActivity.usr.getMarkFavKeywords();
         for(Keyword temp : keywords) {
             info += "\n\n" + "Keyword: " + temp.getKeyword() + "\nCheck On: " + temp.getCheckArea();
         }
