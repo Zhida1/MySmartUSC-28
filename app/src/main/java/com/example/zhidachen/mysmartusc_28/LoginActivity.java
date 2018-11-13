@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -289,7 +290,7 @@ public class LoginActivity extends AppCompatActivity {
                                 MainActivity.usr.addNotification(sender, subject, kw.getCheckArea());
                             }
                             MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
-                            Notification.Builder builder = appNotification.getAppChannelNotification(sender, subject);
+                            NotificationCompat.Builder builder = appNotification.getAppChannelNotification(sender, subject);
                             appNotification.getManager().notify(new Random().nextInt(), builder.build());
 
 

@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // temporary notification
-        Notification.Builder builder = appNotification.getAppChannelNotification("Welcome! " + usr.getUsername() + ".", "Demoing Notification Feature");
+        NotificationCompat.Builder builder = appNotification.getAppChannelNotification("Welcome! " + usr.getUsername() + ".", "Demoing Notification Feature");
         appNotification.getManager().notify(new Random().nextInt(), builder.build());
         // end of temp notification
 

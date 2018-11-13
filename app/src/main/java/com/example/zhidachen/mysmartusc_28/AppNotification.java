@@ -39,12 +39,13 @@ public class AppNotification extends ContextWrapper {
         return notificationManager;
     }
 
-    public Notification.Builder getAppChannelNotification(String title, String content) {
+    public NotificationCompat.Builder getAppChannelNotification(String title, String content) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID);
         builder.setSmallIcon(R.drawable.ic_more_black_24dp);
         builder.setContentTitle(title);
         builder.setContentText(content);
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(content));
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        return builder;
     }
 }
