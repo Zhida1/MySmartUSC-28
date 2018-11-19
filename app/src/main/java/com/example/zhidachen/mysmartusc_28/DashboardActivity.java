@@ -63,15 +63,17 @@ public class DashboardActivity extends Fragment implements View.OnClickListener 
     }
 
     public void RefreshLayout() {
+        String info = "";
+        displayNotification.setText(info);
         ArrayList<Notification> notifToSend = MainActivity.usr.parseEmail();
         MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
         for(Notification temp : notifToSend) {
             NotificationCompat.Builder builder = appNotification.getAppChannelNotification(temp.getSender(), temp.getSubject());
             appNotification.getManager().notify(new Random().nextInt(), builder.build());
         }
-        ArrayList<Notification> allNotif = MainActivity.usr.getNotifications();
-        String info = "";
-        for(Notification temp : allNotif) {
+        ArrayList<Notification> messages = MainActivity.usr.getNotifications();
+        info = "";
+        for(Notification temp : messages) {
             info += "\n\n" + "New Email from: " + temp.getSender() + "\nSubject: " + temp.getSubject() + "\nType: " + temp.getType();
         }
         displayNotification.setText(info);
