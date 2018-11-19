@@ -111,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent toDashBoardActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
+                MainActivity.fragmentManager.beginTransaction().add(R.id.fragment_container, new DashboardActivity(), "DashboardLayout").commit();
                 startActivity(toDashBoardActivityIntent);
             }
         });
