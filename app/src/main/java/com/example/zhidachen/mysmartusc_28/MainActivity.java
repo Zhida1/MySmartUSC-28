@@ -55,8 +55,6 @@ public class MainActivity extends AppCompatActivity {
         appNotification.getManager().notify(new Random().nextInt(), builder.build());
         // end of temp notification
 
-        fragmentManager.beginTransaction().add(R.id.fragment_container, new DashboardActivity(), "DashboardLayout").commit();
-
 
         // Temp Notification
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);

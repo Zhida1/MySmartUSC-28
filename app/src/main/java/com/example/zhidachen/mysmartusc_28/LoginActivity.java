@@ -285,13 +285,8 @@ public class LoginActivity extends AppCompatActivity {
                             } // end of else
 
                             // check if match keywords
-                            Keyword kw = MainActivity.usr.containsNotifKeyword(content);
-                            if (kw != null) {
-                                MainActivity.usr.addNotification(sender, subject, kw.getCheckArea());
-                            }
-                            MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
-                            NotificationCompat.Builder builder = appNotification.getAppChannelNotification(sender, subject);
-                            appNotification.getManager().notify(new Random().nextInt(), builder.build());
+                            UserEmail mail = new UserEmail(emailId, sender, subject, content);
+                            MainActivity.usr.addUserEmail(mail);
 
 
                             // addNotificationToDatabase(single_message);
@@ -310,6 +305,7 @@ public class LoginActivity extends AppCompatActivity {
             });
 
             // Signed in successfully, show authenticated UI.
+            MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
             updateUI(account);
 
         } catch (ApiException e) {
@@ -357,6 +353,7 @@ public class LoginActivity extends AppCompatActivity {
             // launch our main activity
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             Intent toDashBoardActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
+            MainActivity.fragmentManager.beginTransaction().add(R.id.fragment_container, new DashboardActivity(), "DashboardLayout").commit();
             startActivity(toDashBoardActivityIntent);
         }
     } // end of updateUI method

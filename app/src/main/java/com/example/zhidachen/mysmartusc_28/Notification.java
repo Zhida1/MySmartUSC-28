@@ -10,10 +10,11 @@ public class Notification {
 
     }
 
-    public Notification(String sender, String subject, String type) {
+    public Notification(String sender, String subject, String type, String emailId) {
         this.sender = sender;
         this.subject = subject;
         this.type = type;
+        this.emailId = emailId;
     }
 
     public String getSender() {
@@ -29,10 +30,7 @@ public class Notification {
     }
 
     public String getEmailId() {
-        if (emailId != null) {
-            return this.emailId;
-        }
-        return "";
+        return emailId;
     }
 
     public void setSender(String sender) {

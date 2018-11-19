@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.arch.persistence.room.Room;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -24,6 +26,7 @@ public class DashboardActivity extends Fragment implements View.OnClickListener 
     public Button viewKeywordsBn;
     public TextView displayNotification;
     public static AppDatabase appDatabase;
+    public AppNotification appNotification;
 
     public DashboardActivity() {
         // Required empty public constructor
@@ -37,6 +40,7 @@ public class DashboardActivity extends Fragment implements View.OnClickListener 
         View view = inflater.inflate(R.layout.dashboard_activity, container, false);
 
         // settings for greeting message
+        appNotification = new AppNotification((MainActivity)getActivity());
         AppDatabase appDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, "userDatabase").allowMainThreadQueries().build();
         List<User> users = appDatabase.appDao().getUsers();
         TextView helloUser = (TextView) view.findViewById(R.id.hello_user);
@@ -59,9 +63,14 @@ public class DashboardActivity extends Fragment implements View.OnClickListener 
     }
 
     public void RefreshLayout() {
-        ArrayList<Notification> keywords = MainActivity.usr.getNotifications();
+        ArrayList<Notification> notifToSend = MainActivity.usr.parseEmail();
+        for(Notification temp : notifToSend) {
+            NotificationCompat.Builder builder = appNotification.getAppChannelNotification(temp.getSender(), temp.getSubject());
+            appNotification.getManager().notify(new Random().nextInt(), builder.build());
+        }
+        ArrayList<Notification> allNotif = MainActivity.usr.getNotifications();
         String info = "";
-        for(Notification temp : keywords) {
+        for(Notification temp : allNotif) {
             info += "\n\n" + "New Email from: " + temp.getSender() + "\nSubject: " + temp.getSubject() + "\nType: " + temp.getType();
         }
         displayNotification.setText(info);
