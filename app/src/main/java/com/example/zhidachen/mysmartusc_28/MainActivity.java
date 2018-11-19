@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             usr = users.get(0);
         }
+        startTransactionToDB();
         if(findViewById(R.id.fragment_container) != null) {
             if(savedInstanceState != null) {
                 return;
@@ -55,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         appNotification.getManager().notify(new Random().nextInt(), builder.build());
         // end of temp notification
 
-
         // Temp Notification
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         PendingIntent broadcast = PendingIntent.getBroadcast(this, 100, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), broadcast);
 
+
         redirect_loginBn = (Button) findViewById(R.id.Login_Button);
         redirect_loginBn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,5 +74,28 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(toLoginActivityIntent);
             }
         });
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        startTransactionToDB();
+    }
+
+    public void startTransactionToDB() {
+        Intent intent = getIntent();
+        if(intent.getStringExtra("callMethod").equals("startTransaction")){
+            List<User> users = appDatabase.appDao().getUsers();
+            if(users.size() == 0) {
+                User temp = new User("New User");
+                usr = temp;
+                appDatabase.appDao().addUser(temp);
+            } else {
+                usr = users.get(0);
+            }
+            fragmentManager.beginTransaction().add(R.id.fragment_container, new DashboardActivity(), "DashboardLayout").commit();
+
+        }
     }
 }

@@ -64,6 +64,7 @@ public class DashboardActivity extends Fragment implements View.OnClickListener 
 
     public void RefreshLayout() {
         ArrayList<Notification> notifToSend = MainActivity.usr.parseEmail();
+        MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
         for(Notification temp : notifToSend) {
             NotificationCompat.Builder builder = appNotification.getAppChannelNotification(temp.getSender(), temp.getSubject());
             appNotification.getManager().notify(new Random().nextInt(), builder.build());

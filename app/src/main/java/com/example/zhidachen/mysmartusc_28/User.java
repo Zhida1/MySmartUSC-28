@@ -170,6 +170,7 @@ public class User {
                     }
                     if(notif != null) {
                         store.add(notif);
+                        notifications.add(notif);
                         break;
                     }
                 }
