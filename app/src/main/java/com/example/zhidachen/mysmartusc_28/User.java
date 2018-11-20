@@ -15,6 +15,7 @@ public class User {
     private ArrayList<Keyword> notifKeywords;
     private ArrayList<Keyword> markFavKeywords;
     private ArrayList<Notification> notifications;
+    private ArrayList<UserEmail> userEmails;
 
 //    public String access_token;
 //    public int expires_in;
@@ -27,6 +28,7 @@ public class User {
         notifKeywords = new ArrayList<Keyword>();
         markFavKeywords = new ArrayList<Keyword>();
         notifications = new ArrayList<Notification>();
+        userEmails = new ArrayList<UserEmail>();
     }
 
     public User(String username) {
@@ -34,6 +36,7 @@ public class User {
         notifKeywords = new ArrayList<Keyword>();
         markFavKeywords = new ArrayList<Keyword>();
         notifications = new ArrayList<Notification>();
+        userEmails = new ArrayList<UserEmail>();
     }
 
     public String getUsername() {
@@ -117,8 +120,8 @@ public class User {
         return notifications;
     }
 
-    public void addNotification(String sender, String subject, String type) {
-        Notification temp = new Notification(sender, subject, type);
+    public void addNotification(String sender, String subject, String type, String emailID) {
+        Notification temp = new Notification(sender, subject, type, emailID);
         notifications.add(temp);
     }
 
@@ -145,6 +148,39 @@ public class User {
         return null;
     }
 
+    public ArrayList<Notification> parseEmail() {
+        ArrayList<Notification> store = new ArrayList<Notification>();
+        System.out.println("start parsing");
+        for(int x = 0; x < userEmails.size(); x++) {
+            if(userEmails.get(x).getNewOld() == 0) {
+                userEmails.get(x).setNewOld(1);
+                for (int i = 0; i < notifKeywords.size(); i++) {
+                    Notification notif = null;
+                    if(userEmails.get(x).getSender().equals(notifKeywords.get(i).getKeyword())) {
+                        notif = new Notification(userEmails.get(x).getSender(), userEmails.get(x).getSubject(), notifKeywords.get(i).getCheckArea(), userEmails.get(x).getEmail_id());
+                    }
+                    else if(userEmails.get(x).getSubject().equals(notifKeywords.get(i).getKeyword())) {
+                        notif = new Notification(userEmails.get(x).getSender(), userEmails.get(x).getSubject(), notifKeywords.get(i).getCheckArea(), userEmails.get(x).getEmail_id());
+                    }
+                    else if(userEmails.get(x).getContent().equals(notifKeywords.get(i).getKeyword())) {
+                        notif = new Notification(userEmails.get(x).getSender(), userEmails.get(x).getSubject(), notifKeywords.get(i).getCheckArea(), userEmails.get(x).getEmail_id());
+                    }
+                    if(notif != null) {
+                        store.add(notif);
+                        notifications.add(notif);
+                        break;
+                    }
+                }
+                for(int j = 0; j < markFavKeywords.size(); j++) {
+                    if(userEmails.get(x).getContent().equals(markFavKeywords.get(j).getKeyword())) {
+                        userEmails.get(x).setFavNot(1);
+                    }
+                }
+            }
+        }
+        return store;
+    }
+
     public ArrayList<Keyword> getNotifKeywords()
     {
         return notifKeywords;
@@ -163,5 +199,16 @@ public class User {
     public void setMarkFavKeywords(ArrayList<Keyword> markFavKeywords)
     {
         this.markFavKeywords = markFavKeywords;
+    }
+
+    public ArrayList<UserEmail> getUserEmails() {
+        return userEmails;
+    }
+
+    public void setUserEmails(ArrayList<UserEmail> userEmails) {
+        this.userEmails = userEmails;
+    }
+    public void addUserEmail(UserEmail mail) {
+        userEmails.add(mail);
     }
 }

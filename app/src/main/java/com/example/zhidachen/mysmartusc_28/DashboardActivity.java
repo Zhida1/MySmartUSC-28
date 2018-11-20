@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.arch.persistence.room.Room;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -22,8 +25,9 @@ import java.util.List;
 public class DashboardActivity extends Fragment implements View.OnClickListener {
     public Button addKeywordBn;
     public Button viewKeywordsBn;
+    public Button favEmailBn;
     public TextView displayNotification;
-    public static AppDatabase appDatabase;
+    public AppNotification appNotification;
 
     public DashboardActivity() {
         // Required empty public constructor
@@ -37,10 +41,9 @@ public class DashboardActivity extends Fragment implements View.OnClickListener 
         View view = inflater.inflate(R.layout.dashboard_activity, container, false);
 
         // settings for greeting message
-        AppDatabase appDatabase = Room.databaseBuilder(getContext(), AppDatabase.class, "userDatabase").allowMainThreadQueries().build();
-        List<User> users = appDatabase.appDao().getUsers();
+        appNotification = new AppNotification((MainActivity)getActivity());
         TextView helloUser = (TextView) view.findViewById(R.id.hello_user);
-        String greeting = "Hello " + users.get(0).getUsername();
+        String greeting = "Hello " + MainActivity.usr.getUsername();
         helloUser.setText(greeting);
 
         // settings for add keyword button
@@ -51,6 +54,9 @@ public class DashboardActivity extends Fragment implements View.OnClickListener 
         viewKeywordsBn = view.findViewById(R.id.to_view_keywords);
         viewKeywordsBn.setOnClickListener(this);
 
+        favEmailBn = view.findViewById(R.id.to_fav_emails);
+        favEmailBn.setOnClickListener(this);
+
         // settings for display notification
         displayNotification = view.findViewById(R.id.display_notification);
         RefreshLayout();
@@ -59,10 +65,21 @@ public class DashboardActivity extends Fragment implements View.OnClickListener 
     }
 
     public void RefreshLayout() {
-        ArrayList<Notification> keywords = MainActivity.usr.getNotifications();
         String info = "";
-        for(Notification temp : keywords) {
-            info += "\n\n" + "New Email from: " + temp.getSender() + "\nSubject: " + temp.getSubject() + "\nType: " + temp.getType();
+        displayNotification.setText(info);
+        ArrayList<Notification> newNotifs = MainActivity.usr.parseEmail();
+        if(newNotifs.size() != 0) {
+            MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
+        }
+        for(Notification toSend : newNotifs) {
+            NotificationCompat.Builder builder = appNotification.getAppChannelNotification(toSend.getSender(), toSend.getSubject());
+            appNotification.getManager().notify(new Random().nextInt(), builder.build());
+        }
+
+        ArrayList<Notification> allNotifs = MainActivity.usr.getNotifications();
+        info = "";
+        for(Notification toDisplay : allNotifs) {
+            info += "\n\n" + "New Email from: " + toDisplay.getSender() + "\nSubject: " + toDisplay.getSubject() + "\nType: " + toDisplay.getType();
         }
         displayNotification.setText(info);
     }
@@ -74,6 +91,9 @@ public class DashboardActivity extends Fragment implements View.OnClickListener 
                 break;
             case R.id.to_view_keywords:
                 MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container,new ViewKeywordActivity()).addToBackStack(null).commit();
+                break;
+            case R.id.to_fav_emails:
+                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new FavEmailActivity()).addToBackStack(null).commit();
                 break;
         }
 

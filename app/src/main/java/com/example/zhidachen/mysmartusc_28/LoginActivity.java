@@ -70,7 +70,8 @@ public class LoginActivity extends AppCompatActivity {
     protected GoogleClientSecrets clientSecrets;
     // Authorization JSON file (include access token)
     protected AccessTokenJSON authorizationObject;
-    private AppNotification appNotification;
+
+    public static AppDatabase appDatabase;
 
     // Our own variables (including database, buttons, etc.)
     //User
@@ -80,7 +81,16 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        appNotification = new AppNotification(this);
+        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "userDatabase").allowMainThreadQueries().build();
+        List<User> users = appDatabase.appDao().getUsers();
+        if(users.size() == 0) {
+            User temp = new User("New User");
+            usr = temp;
+            appDatabase.appDao().addUser(temp);
+        } else {
+            usr = users.get(0);
+        }
+        
 
         // Configure Google sign-in
         // Upon success, we have access to: user ID, email, basic profile
@@ -111,6 +121,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent toDashBoardActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
+                toDashBoardActivityIntent.putExtra("callMethod", "startTransaction");
                 startActivity(toDashBoardActivityIntent);
             }
         });
@@ -285,13 +296,8 @@ public class LoginActivity extends AppCompatActivity {
                             } // end of else
 
                             // check if match keywords
-                            Keyword kw = MainActivity.usr.containsNotifKeyword(content);
-                            if (kw != null) {
-                                MainActivity.usr.addNotification(sender, subject, kw.getCheckArea());
-                            }
-                            MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
-                            NotificationCompat.Builder builder = appNotification.getAppChannelNotification(sender, subject);
-                            appNotification.getManager().notify(new Random().nextInt(), builder.build());
+                            UserEmail mail = new UserEmail(emailId, sender, subject, content);
+                            usr.addUserEmail(mail);
 
 
                             // addNotificationToDatabase(single_message);
@@ -310,6 +316,7 @@ public class LoginActivity extends AppCompatActivity {
             });
 
             // Signed in successfully, show authenticated UI.
+            appDatabase.appDao().updateUser(usr);
             updateUI(account);
 
         } catch (ApiException e) {
@@ -357,6 +364,7 @@ public class LoginActivity extends AppCompatActivity {
             // launch our main activity
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             Intent toDashBoardActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
+            toDashBoardActivityIntent.putExtra("callMethod", "startTransaction");
             startActivity(toDashBoardActivityIntent);
         }
     } // end of updateUI method

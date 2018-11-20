@@ -31,4 +31,16 @@ public class Converters {
         String json = gson.toJson(list);
         return json;
     }
+
+    @TypeConverter
+    public static ArrayList<UserEmail> fromStringToEmail(String value){
+        Type listType= new TypeToken<ArrayList<UserEmail>>() {}.getType();
+        return new Gson().fromJson(value, listType);
+    }
+    @TypeConverter
+    public static String fromArrayListUserEmail(ArrayList<UserEmail> list){
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        return json;
+    }
 }
