@@ -172,7 +172,7 @@ public class User {
                     }
                 }
                 for(int j = 0; j < markFavKeywords.size(); j++) {
-                    if(userEmails.get(x).getContent().equals(markFavKeywords.get(j).getKeyword())) {
+                    if(userEmails.get(x).getContent().contains(markFavKeywords.get(j).getKeyword())) {
                         userEmails.get(x).setFavNot(1);
                     }
                 }
