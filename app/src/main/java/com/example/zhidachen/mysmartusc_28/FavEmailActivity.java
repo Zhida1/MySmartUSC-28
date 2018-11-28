@@ -4,6 +4,7 @@ package com.example.zhidachen.mysmartusc_28;
 import android.arch.persistence.room.Room;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ public class FavEmailActivity extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.favemail_activity, container, false);
         displayEmail = view.findViewById(R.id.display_email_textview);
+        displayEmail.setMovementMethod(new ScrollingMovementMethod());
         ArrayList<UserEmail> mails = MainActivity.usr.getUserEmails();
         String info = "";
         System.out.println("size: " + mails.size());
