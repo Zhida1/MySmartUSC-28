@@ -79,6 +79,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void updateCurrUser() {
+        List<User> users = appDatabase.appDao().getUsers();
+        if(users.size() == 0) {
+            User temp = new User("New User");
+            usr = temp;
+            appDatabase.appDao().addUser(temp);
+        } else {
+            usr = users.get(0);
+        }
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -89,14 +100,7 @@ public class MainActivity extends AppCompatActivity {
     public void startTransactionToDB() {
         Intent intent = getIntent();
         if(intent.getStringExtra("callMethod").equals("startTransaction")){
-            List<User> users = appDatabase.appDao().getUsers();
-            if(users.size() == 0) {
-                User temp = new User("New User");
-                usr = temp;
-                appDatabase.appDao().addUser(temp);
-            } else {
-                usr = users.get(0);
-            }
+            updateCurrUser();
             usr.parseEmail();
             fragmentManager.beginTransaction().add(R.id.fragment_container, new DashboardActivity(), "DashboardLayout").commit();
 

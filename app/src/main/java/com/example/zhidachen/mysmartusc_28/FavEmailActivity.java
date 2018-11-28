@@ -32,6 +32,7 @@ public class FavEmailActivity extends Fragment {
         displayEmail = view.findViewById(R.id.display_email_textview);
         ArrayList<UserEmail> mails = MainActivity.usr.getUserEmails();
         String info = "";
+        System.out.println("size: " + mails.size());
         for(UserEmail toDisplay : mails) {
             if(toDisplay.getFavNot() == 1) {
                 info += "\n\n" + toDisplay.getSender() + "\n" + toDisplay.getSubject() + "\n" + toDisplay.getContent();

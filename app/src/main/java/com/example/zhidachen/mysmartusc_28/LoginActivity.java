@@ -70,27 +70,16 @@ public class LoginActivity extends AppCompatActivity {
     protected GoogleClientSecrets clientSecrets;
     // Authorization JSON file (include access token)
     protected AccessTokenJSON authorizationObject;
-
-    public static AppDatabase appDatabase;
-
+    
     // Our own variables (including database, buttons, etc.)
     //User
-    User usr;
+    //User usr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "userDatabase").allowMainThreadQueries().build();
-        List<User> users = appDatabase.appDao().getUsers();
-        if(users.size() == 0) {
-            User temp = new User("New User");
-            usr = temp;
-            appDatabase.appDao().addUser(temp);
-        } else {
-            usr = users.get(0);
-        }
-        
+
 
         // Configure Google sign-in
         // Upon success, we have access to: user ID, email, basic profile
@@ -270,6 +259,7 @@ public class LoginActivity extends AppCompatActivity {
                                 String msg = StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getPayload().getParts().get(0).getBody().getData()));
                                 content = msg;
                                 Log.w("Inside Gmail message:", content);
+                                System.out.println(content);
                                 //Log.w("Inside Gmail message:", StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getRaw()))); need to call setFormat("raw")
 
                                 // get sender from header
@@ -280,13 +270,19 @@ public class LoginActivity extends AppCompatActivity {
                                     if (headers.get(j).getName().equals("From")) {
                                         sender = headers.get(j).getValue();
                                         Log.w("Header: ", sender);
+                                        System.out.println(sender);
                                         gotSender = true;
                                     }
                                     if (headers.get(j).getName().equals("Subject")) {
                                         subject = headers.get(j).getValue();
+                                        Log.w("Subject: ", subject);
+                                        System.out.println(subject);
                                         gotSubject = true;
                                     }
                                     if (gotSender && gotSubject) {
+                                        UserEmail mail = new UserEmail(emailId, sender.substring(sender.indexOf("<")+1,sender.indexOf(">")), subject, content);
+                                        MainActivity.usr.addUserEmail(mail);
+                                        MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
                                         break;
                                     }
 
@@ -296,8 +292,7 @@ public class LoginActivity extends AppCompatActivity {
                             } // end of else
 
                             // check if match keywords
-                            UserEmail mail = new UserEmail(emailId, sender, subject, content);
-                            usr.addUserEmail(mail);
+
 
 
                             // addNotificationToDatabase(single_message);
@@ -316,7 +311,7 @@ public class LoginActivity extends AppCompatActivity {
             });
 
             // Signed in successfully, show authenticated UI.
-            appDatabase.appDao().updateUser(usr);
+            //appDatabase.appDao().updateUser(usr);
             updateUI(account);
 
         } catch (ApiException e) {
@@ -337,11 +332,13 @@ public class LoginActivity extends AppCompatActivity {
         AppDatabase appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "userDatabase").allowMainThreadQueries().build();
         List<User> users = appDatabase.appDao().getUsers();
         if (users.size() == 0) {
-            usr = new User(acct.getGivenName());
+            User usr = new User(acct.getGivenName());
             appDatabase.appDao().addUser(usr);
         } else {
-            usr = users.get(0);
+            User usr = users.get(0);
             usr.setUsername(acct.getGivenName());
+            appDatabase.appDao().updateUser(usr);
+
         }
     } // end of AddUserToDatabase method
 
