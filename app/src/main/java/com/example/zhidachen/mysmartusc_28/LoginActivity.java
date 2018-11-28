@@ -215,11 +215,11 @@ public class LoginActivity extends AppCompatActivity {
 
                         final NetHttpTransport HTTP_TRANSPORT = new com.google.api.client.http.javanet.NetHttpTransport();
 
-                        Gmail service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+                        MainActivity.service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
                                 .setApplicationName("MySmartUSC28")
                                 .build();
 
-                        ListMessagesResponse gmail_response = service.users()
+                        ListMessagesResponse gmail_response = MainActivity.service.users()
                                 .messages()
                                 .list("me")
                                 .setMaxResults(Long.valueOf(20))
@@ -231,7 +231,7 @@ public class LoginActivity extends AppCompatActivity {
                             messages.addAll(gmail_response.getMessages());
                             if (gmail_response.getNextPageToken() != null) {
                                 String pageToken = gmail_response.getNextPageToken();
-                                gmail_response = service.users().messages().list("me")
+                                gmail_response = MainActivity.service.users().messages().list("me")
                                         .setPageToken(pageToken).execute();
                             } else {
                                 break;
@@ -247,9 +247,13 @@ public class LoginActivity extends AppCompatActivity {
                             String content = "";
 
                             // get single message
-                            Message single_message = service.users().messages().get("me", userId).execute();
+                            Message single_message = MainActivity.service.users().messages().get("me", userId).execute();
                             MessagePart part = single_message.getPayload();
                             Log.w("Inside:", single_message.toString());
+                            if(single_message.toString().indexOf("UNREAD") == -1) {
+                                continue;
+                            }
+
 
                             // read, decode email content --> store it into content
                             if (single_message.toString().contains("payload\":{\"body\":{\"data")) {
@@ -257,6 +261,10 @@ public class LoginActivity extends AppCompatActivity {
                                 String bd = new String(bodyBytes, "UTF-8");
                                 content = bd;
                                 Log.w("Inside Gmail UPDATES: ", content);
+                                UserEmail mail = new UserEmail(content);
+                                MainActivity.usr.addUserEmail(mail);
+                                MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
+                                break;
                             } else {
                                 String msg = StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getPayload().getParts().get(0).getBody().getData()));
                                 content = msg;
@@ -310,6 +318,7 @@ public class LoginActivity extends AppCompatActivity {
                             NotificationCompat.Builder builder = appNotification.getAppChannelNotification(toSend.getSender(), toSend.getSubject());
                             appNotification.getManager().notify(new Random().nextInt(), builder.build());
                         }
+                        MainActivity.loginCheck = 1;
 
 
                     } catch (JSONException e) {

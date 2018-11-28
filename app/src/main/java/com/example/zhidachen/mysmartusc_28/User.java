@@ -161,26 +161,46 @@ public class User {
         for(int x = 0; x < userEmails.size(); x++) {
             if(userEmails.get(x).getNewOld() == 0) {
                 userEmails.get(x).setNewOld(1);
-                for (int i = 0; i < notifKeywords.size(); i++) {
+                if(userEmails.get(x).getEmail_id().equals("Special")) {
                     com.example.zhidachen.mysmartusc_28.Notification notif = null;
-                    if(userEmails.get(x).getSender().equals(notifKeywords.get(i).getKeyword())) {
-                        notif = new Notification(userEmails.get(x).getSender(), userEmails.get(x).getSubject(), notifKeywords.get(i).getCheckArea(), userEmails.get(x).getEmail_id());
+                    for (int i = 0; i < notifKeywords.size(); i++) {
+                        if (userEmails.get(x).getContent().contains(notifKeywords.get(i).getKeyword())) {
+                            notif = new Notification(userEmails.get(x).getSender(), userEmails.get(x).getSubject(), notifKeywords.get(i).getCheckArea(), userEmails.get(x).getEmail_id());
+                        }
+                        if(notif != null) {
+                            store.add(notif);
+                            notifications.add(notif);
+                            break;
+                        }
                     }
-                    else if(userEmails.get(x).getSubject().equals(notifKeywords.get(i).getKeyword())) {
-                        notif = new Notification(userEmails.get(x).getSender(), userEmails.get(x).getSubject(), notifKeywords.get(i).getCheckArea(), userEmails.get(x).getEmail_id());
-                    }
-                    else if(userEmails.get(x).getContent().equals(notifKeywords.get(i).getKeyword())) {
-                        notif = new Notification(userEmails.get(x).getSender(), userEmails.get(x).getSubject(), notifKeywords.get(i).getCheckArea(), userEmails.get(x).getEmail_id());
-                    }
-                    if(notif != null) {
-                        store.add(notif);
-                        notifications.add(notif);
-                        break;
+                    for (int j = 0; j < markFavKeywords.size(); j++) {
+                        if (userEmails.get(x).getContent().contains(markFavKeywords.get(j).getKeyword())) {
+                            userEmails.get(x).setFavNot(1);
+                        }
                     }
                 }
-                for(int j = 0; j < markFavKeywords.size(); j++) {
-                    if(userEmails.get(x).getContent().contains(markFavKeywords.get(j).getKeyword())) {
-                        userEmails.get(x).setFavNot(1);
+                else {
+                    for (int i = 0; i < notifKeywords.size(); i++) {
+                        com.example.zhidachen.mysmartusc_28.Notification notif = null;
+                        if(userEmails.get(x).getSender().equals(notifKeywords.get(i).getKeyword())) {
+                            notif = new Notification(userEmails.get(x).getSender(), userEmails.get(x).getSubject(), notifKeywords.get(i).getCheckArea(), userEmails.get(x).getEmail_id());
+                        }
+                        else if(userEmails.get(x).getSubject().equals(notifKeywords.get(i).getKeyword())) {
+                            notif = new Notification(userEmails.get(x).getSender(), userEmails.get(x).getSubject(), notifKeywords.get(i).getCheckArea(), userEmails.get(x).getEmail_id());
+                        }
+                        else if(userEmails.get(x).getContent().equals(notifKeywords.get(i).getKeyword())) {
+                            notif = new Notification(userEmails.get(x).getSender(), userEmails.get(x).getSubject(), notifKeywords.get(i).getCheckArea(), userEmails.get(x).getEmail_id());
+                        }
+                        if(notif != null) {
+                            store.add(notif);
+                            notifications.add(notif);
+                            break;
+                        }
+                    }
+                    for(int j = 0; j < markFavKeywords.size(); j++) {
+                        if(userEmails.get(x).getContent().contains(markFavKeywords.get(j).getKeyword())) {
+                            userEmails.get(x).setFavNot(1);
+                        }
                     }
                 }
             }

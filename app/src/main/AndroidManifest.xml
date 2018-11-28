@@ -12,6 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".CheckEmailService"
+            android:exported="false"/>
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"

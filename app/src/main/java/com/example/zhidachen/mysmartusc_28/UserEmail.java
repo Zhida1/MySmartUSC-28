@@ -24,6 +24,15 @@ public class UserEmail {
         this.content = content;
     }
 
+    public UserEmail(String content) {
+        newOld = 0;
+        favNot = 0;
+        this.email_id = "Special";
+        this.sender = "Sender";
+        this.subject = "Subject";
+        this.content = content;
+    }
+
     public String getEmail_id() {
         return email_id;
     }
