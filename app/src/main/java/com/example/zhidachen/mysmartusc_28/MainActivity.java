@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
@@ -79,14 +80,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void updateCurrUser() {
-        List<User> users = appDatabase.appDao().getUsers();
-        if(users.size() == 0) {
-            User temp = new User("New User");
-            usr = temp;
-            appDatabase.appDao().addUser(temp);
-        } else {
-            usr = users.get(0);
+    public void sendNotification(String flag) {
+        if(flag.equals("parse")) {
+            ArrayList<com.example.zhidachen.mysmartusc_28.Notification> newNotifs = usr.parseEmail();
+            appDatabase.appDao().updateUser(usr);
+            for(com.example.zhidachen.mysmartusc_28.Notification toSend : newNotifs) {
+                NotificationCompat.Builder builder = appNotification.getAppChannelNotification(toSend.getSender(), toSend.getSubject());
+                appNotification.getManager().notify(new Random().nextInt(), builder.build());
+            }
         }
     }
 
@@ -100,7 +101,14 @@ public class MainActivity extends AppCompatActivity {
     public void startTransactionToDB() {
         Intent intent = getIntent();
         if(intent.getStringExtra("callMethod").equals("startTransaction")){
-            updateCurrUser();
+            List<User> users = appDatabase.appDao().getUsers();
+            if(users.size() == 0) {
+                User temp = new User("New User");
+                usr = temp;
+                appDatabase.appDao().addUser(temp);
+            } else {
+                usr = users.get(0);
+            }
             usr.parseEmail();
             fragmentManager.beginTransaction().add(R.id.fragment_container, new DashboardActivity(), "DashboardLayout").commit();
 

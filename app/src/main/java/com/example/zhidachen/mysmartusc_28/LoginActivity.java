@@ -70,7 +70,8 @@ public class LoginActivity extends AppCompatActivity {
     protected GoogleClientSecrets clientSecrets;
     // Authorization JSON file (include access token)
     protected AccessTokenJSON authorizationObject;
-    
+    public AppNotification appNotification;
+
     // Our own variables (including database, buttons, etc.)
     //User
     //User usr;
@@ -83,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Configure Google sign-in
         // Upon success, we have access to: user ID, email, basic profile
+        appNotification = new AppNotification(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestScopes(new Scope(GmailScopes.GMAIL_READONLY))
@@ -301,6 +303,12 @@ public class LoginActivity extends AppCompatActivity {
                             //MainActivity.usr.addNotification(String sender, String subject, String type);
                             //MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
 
+                        }
+                        ArrayList<com.example.zhidachen.mysmartusc_28.Notification> newNotifs = MainActivity.usr.parseEmail();
+                        MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
+                        for(com.example.zhidachen.mysmartusc_28.Notification toSend : newNotifs) {
+                            NotificationCompat.Builder builder = appNotification.getAppChannelNotification(toSend.getSender(), toSend.getSubject());
+                            appNotification.getManager().notify(new Random().nextInt(), builder.build());
                         }
 
 

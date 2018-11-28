@@ -148,14 +148,21 @@ public class User {
         return null;
     }
 
-    public ArrayList<Notification> parseEmail() {
-        ArrayList<Notification> store = new ArrayList<Notification>();
-        System.out.println("start parsing");
+    public String displayTextNotifc() {
+        String text = "";
+        for(int i = 0; i < notifications.size(); i++) {
+            text += "\n\n" + "New Email from: " + notifications.get(i).getSender() + "\nSubject: " + notifications.get(i).getSubject() + "\nType: " + notifications.get(i).getType();
+        }
+        return text;
+    }
+
+    public ArrayList<com.example.zhidachen.mysmartusc_28.Notification> parseEmail() {
+        ArrayList<com.example.zhidachen.mysmartusc_28.Notification> store = new ArrayList<com.example.zhidachen.mysmartusc_28.Notification>();
         for(int x = 0; x < userEmails.size(); x++) {
             if(userEmails.get(x).getNewOld() == 0) {
                 userEmails.get(x).setNewOld(1);
                 for (int i = 0; i < notifKeywords.size(); i++) {
-                    Notification notif = null;
+                    com.example.zhidachen.mysmartusc_28.Notification notif = null;
                     if(userEmails.get(x).getSender().equals(notifKeywords.get(i).getKeyword())) {
                         notif = new Notification(userEmails.get(x).getSender(), userEmails.get(x).getSubject(), notifKeywords.get(i).getCheckArea(), userEmails.get(x).getEmail_id());
                     }

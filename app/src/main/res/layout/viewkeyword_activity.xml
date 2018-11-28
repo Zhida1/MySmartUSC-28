@@ -13,6 +13,7 @@
         android:textSize="18dp"
         android:textStyle="bold"
         android:layout_margin="12dp"
+        android:scrollbars="vertical"
         android:text="No Keyword Has Been Added" />
 
 </FrameLayout>

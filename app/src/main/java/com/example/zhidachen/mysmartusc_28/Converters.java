@@ -22,7 +22,7 @@ public class Converters {
     }
     @TypeConverter
     public static ArrayList<Notification> fromStringToNotification(String value){
-        Type listType= new TypeToken<ArrayList<Keyword>>() {}.getType();
+        Type listType= new TypeToken<ArrayList<Notification>>() {}.getType();
         return new Gson().fromJson(value, listType);
     }
     @TypeConverter
