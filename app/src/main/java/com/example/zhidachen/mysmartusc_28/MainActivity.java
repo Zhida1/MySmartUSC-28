@@ -150,7 +150,14 @@ public class MainActivity extends AppCompatActivity implements MessageResultRece
                 tempFragment.RefreshLayout();
             }
             else {
-                System.out.println("in main, dashboardfragment null");
+                System.out.println("in main, dashboardfragment null, will not update");
+            }
+            FavEmailActivity feFragment = (FavEmailActivity) fragmentManager.findFragmentByTag("FavEmailLayout");
+            if(feFragment != null) {
+                feFragment.RefreshLayout();
+            }
+            else {
+                System.out.println("in main, favemailfragment null, will not update");
             }
         }
         messageServiceIntent = new Intent(this, CheckEmailService.class);

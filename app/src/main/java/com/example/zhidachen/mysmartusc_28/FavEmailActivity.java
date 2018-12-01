@@ -32,8 +32,14 @@ public class FavEmailActivity extends Fragment {
         View view = inflater.inflate(R.layout.favemail_activity, container, false);
         displayEmail = view.findViewById(R.id.display_email_textview);
         displayEmail.setMovementMethod(new ScrollingMovementMethod());
+        RefreshLayout();
+        return view;
+    }
+
+    public void RefreshLayout() {
         ArrayList<UserEmail> mails = MainActivity.usr.getUserEmails();
         String info = "";
+        displayEmail.setText(info);
         System.out.println("size: " + mails.size());
         for(int i = mails.size() - 1; i >= 0; i--) {
             if(mails.get(i).getFavNot() == 1) {
@@ -41,6 +47,5 @@ public class FavEmailActivity extends Fragment {
             }
         }
         displayEmail.setText(info);
-        return view;
     }
 }

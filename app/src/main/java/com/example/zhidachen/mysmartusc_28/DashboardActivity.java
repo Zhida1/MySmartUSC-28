@@ -76,13 +76,13 @@ public class DashboardActivity extends Fragment implements View.OnClickListener 
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.to_add_keyword:
-                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container,new PreferenceActivity()).addToBackStack(null).commit();
+                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container,new PreferenceActivity(), "PreferenceLayout").addToBackStack(null).commit();
                 break;
             case R.id.to_view_keywords:
-                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container,new ViewKeywordActivity()).addToBackStack(null).commit();
+                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container,new ViewKeywordActivity(), "ViewKeywordLayout").addToBackStack(null).commit();
                 break;
             case R.id.to_fav_emails:
-                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new FavEmailActivity()).addToBackStack(null).commit();
+                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, new FavEmailActivity(), "FavEmailLayout").addToBackStack(null).commit();
                 break;
         }
 

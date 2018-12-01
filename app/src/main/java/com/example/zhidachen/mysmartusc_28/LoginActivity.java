@@ -327,12 +327,19 @@ public class LoginActivity extends AppCompatActivity {
                             appNotification.getManager().notify(new Random().nextInt(), builder.build());
                         }
                         if(MainActivity.fragmentManager != null) {
-                            DashboardActivity aFragment = (DashboardActivity) MainActivity.fragmentManager.findFragmentByTag("DashboardLayout");
-                            if(aFragment != null) {
-                                aFragment.RefreshLayout();
+                            DashboardActivity dbFragment = (DashboardActivity) MainActivity.fragmentManager.findFragmentByTag("DashboardLayout");
+                            if(dbFragment != null) {
+                                dbFragment.RefreshLayout();
                             }
                             else {
-                                System.out.println("in login, dashboardfragment null");
+                                System.out.println("in login, dashboardfragment null, will not update");
+                            }
+                            FavEmailActivity feFragment = (FavEmailActivity) MainActivity.fragmentManager.findFragmentByTag("FavEmailLayout");
+                            if(feFragment != null) {
+                                feFragment.RefreshLayout();
+                            }
+                            else {
+                                System.out.println("in login, favemailfragment null, will not update");
                             }
                         }
                         else {
