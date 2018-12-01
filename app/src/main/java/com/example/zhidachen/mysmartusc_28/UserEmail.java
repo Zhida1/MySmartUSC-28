@@ -11,6 +11,7 @@ public class UserEmail {
     private String sender;
     private String subject;
     private String content;
+    private String forGmail;
 
     public UserEmail() {
 
@@ -22,15 +23,17 @@ public class UserEmail {
         this.sender = sender;
         this.subject = subject;
         this.content = content;
+        this.forGmail = "";
     }
 
-    public UserEmail(String content) {
+    public UserEmail(String forGmail, String content) {
         newOld = 0;
         favNot = 0;
         this.email_id = "Special";
         this.sender = "Sender";
         this.subject = "Subject";
         this.content = content;
+        this.forGmail = forGmail;
     }
 
     public String getEmail_id() {
@@ -79,5 +82,13 @@ public class UserEmail {
 
     public void setFavNot(int favNot) {
         this.favNot = favNot;
+    }
+
+    public String getForGmail() {
+        return forGmail;
+    }
+
+    public void setForGmail(String forGmail) {
+        this.forGmail = forGmail;
     }
 }

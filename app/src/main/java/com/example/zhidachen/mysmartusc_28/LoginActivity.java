@@ -238,7 +238,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         }
                         Log.w("No. of gmail msgs: ", String.valueOf(messages.size()));
-                        for (int i = 0; i < 5; i++) {
+                        for (int i = 0; i < 10; i++) {
                             String userId = messages.get(i).getId();
                             String emailId = messages.get(i).getId();
                             String sender = "";
@@ -251,6 +251,7 @@ public class LoginActivity extends AppCompatActivity {
                             MessagePart part = single_message.getPayload();
                             Log.w("Inside:", single_message.toString());
                             if(single_message.toString().indexOf("UNREAD") == -1) {
+                                Log.w("Read: ", "proceed to next");
                                 continue;
                             }
 
@@ -260,18 +261,39 @@ public class LoginActivity extends AppCompatActivity {
                                 byte[] bodyBytes = Base64.decodeBase64(single_message.getPayload().getBody().getData());
                                 String bd = new String(bodyBytes, "UTF-8");
                                 content = bd;
-                                Log.w("Inside Gmail UPDATES: ", content);
-                                UserEmail mail = new UserEmail(content);
-                                MainActivity.usr.addUserEmail(mail);
-                                MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
-                                break;
+                                Log.w("Inside Gmail ", "1: ");
+                                List<MessagePartHeader> headers = single_message.getPayload().getHeaders();
+                                boolean gotSender = false;
+                                boolean gotSubject = false;
+                                if(headers != null) {
+                                    for (int j = 0; j < headers.size(); j++) {
+                                        if (headers.get(j).getName().equals("From")) {
+                                            sender = headers.get(j).getValue();
+                                            Log.w("Sender: ", sender);
+                                            gotSender = true;
+                                        }
+                                        if (headers.get(j).getName().equals("Subject")) {
+                                            subject = headers.get(j).getValue();
+                                            Log.w("Subject: ", subject);
+                                            gotSubject = true;
+                                        }
+                                        if (gotSender && gotSubject) {
+                                            Log.w("Content: ", content);
+                                            UserEmail mail = new UserEmail(emailId, sender.substring(sender.indexOf("<")+1,sender.indexOf(">")), subject, content);
+                                            MainActivity.usr.addUserEmail(mail);
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    Log.w("Error: ","headers not available, incorrect format");
+                                }
                             } else {
                                 String msg = StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getPayload().getParts().get(0).getBody().getData()));
                                 content = msg;
-                                Log.w("Inside Gmail message:", content);
-                                System.out.println(content);
+                                Log.w("Inside Gmail ", "2: ");
                                 //Log.w("Inside Gmail message:", StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getRaw()))); need to call setFormat("raw")
 
+                                // get sender from header
                                 // get sender from header
                                 List<MessagePartHeader> headers = single_message.getPayload().getHeaders();
                                 boolean gotSubject = false;
@@ -279,37 +301,23 @@ public class LoginActivity extends AppCompatActivity {
                                 for (int j = 0; j < headers.size(); j++) {
                                     if (headers.get(j).getName().equals("From")) {
                                         sender = headers.get(j).getValue();
-                                        Log.w("Header: ", sender);
-                                        System.out.println(sender);
+                                        Log.w("Sender: ", sender);
                                         gotSender = true;
                                     }
                                     if (headers.get(j).getName().equals("Subject")) {
                                         subject = headers.get(j).getValue();
                                         Log.w("Subject: ", subject);
-                                        System.out.println(subject);
                                         gotSubject = true;
                                     }
                                     if (gotSender && gotSubject) {
+                                        Log.w("Content: ", content);
                                         UserEmail mail = new UserEmail(emailId, sender.substring(sender.indexOf("<")+1,sender.indexOf(">")), subject, content);
                                         MainActivity.usr.addUserEmail(mail);
-                                        MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
                                         break;
                                     }
-
-//                                    Log.w("Header: ", headers.get(j).toString());
                                 }
 
-                            } // end of else
-
-                            // check if match keywords
-
-
-
-                            // addNotificationToDatabase(single_message);
-
-
-                            //MainActivity.usr.addNotification(String sender, String subject, String type);
-                            //MainActivity.appDatabase.appDao().updateUser(MainActivity.usr);
+                            }
 
                         }
                         ArrayList<com.example.zhidachen.mysmartusc_28.Notification> newNotifs = MainActivity.usr.parseEmail();
@@ -346,17 +354,36 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void AddUserToDatabase(GoogleSignInAccount acct) {
-        AppDatabase appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "userDatabase").allowMainThreadQueries().build();
-        List<User> users = appDatabase.appDao().getUsers();
-        if (users.size() == 0) {
-            User usr = new User(acct.getGivenName());
-            appDatabase.appDao().addUser(usr);
-        } else {
-            User usr = users.get(0);
-            usr.setUsername(acct.getGivenName());
-            appDatabase.appDao().updateUser(usr);
-
+        if(MainActivity.appDatabase == null) {
+            AppDatabase appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "userDatabase").allowMainThreadQueries().build();
+            List<User> users = appDatabase.appDao().getUsers();
+            if (users.size() == 0) {
+                User usr = new User(acct.getGivenName());
+                appDatabase.appDao().addUser(usr);
+            } else {
+                User usr = users.get(0);
+                usr.setUsername(acct.getGivenName());
+                appDatabase.appDao().updateUser(usr);
+            }
+            appDatabase.close();
         }
+        else {
+            if(MainActivity.usr != null ) {
+                MainActivity.usr.setUsername(acct.getGivenName());
+            }
+            else {
+                List<User> users = MainActivity.appDatabase.appDao().getUsers();
+                if (users.size() == 0) {
+                    User usr = new User(acct.getGivenName());
+                    MainActivity.appDatabase.appDao().addUser(usr);
+                } else {
+                    User usr = users.get(0);
+                    usr.setUsername(acct.getGivenName());
+                    MainActivity.appDatabase.appDao().updateUser(usr);
+                }
+            }
+        }
+
     } // end of AddUserToDatabase method
 
 //    private void AddTokenInfoToDatabase(AccessTokenJSON authorizationObject) {

@@ -25,15 +25,16 @@ import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements MessageResultReceiver.Receiver {
-    public static AppDatabase appDatabase;
+    public static AppDatabase appDatabase = null;
     public static FragmentManager fragmentManager;
-    public static User usr;
+    public static User usr = null;
     public Button redirect_loginBn;
     public AppNotification appNotification;
     public static Gmail service = null;
     public MessageResultReceiver mReceiver;
     public static int loginCheck = 0;
     public static int currCheck = 0;
+    public Intent messageServiceIntent;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements MessageResultRece
             }
             usr.parseEmail();
             System.out.println("first round");
-            Intent messageServiceIntent = new Intent(this, CheckEmailService.class);
+            messageServiceIntent = new Intent(this, CheckEmailService.class);
             //messageServiceIntent.putExtra("nameTag","sohail" );
             messageServiceIntent.putExtra("receiverTag", mReceiver);
             startService(messageServiceIntent);
@@ -143,12 +144,23 @@ public class MainActivity extends AppCompatActivity implements MessageResultRece
         }
         else if(resultData.getString("serviceResult").equals("doUpdate")) {
             System.out.println("something");
-
+            DashboardActivity tempFragment = (DashboardActivity) fragmentManager.findFragmentByTag("DashboardLayout");
+            if(tempFragment != null) {
+                tempFragment.RefreshLayout();
+            }
         }
-        Intent messageServiceIntent = new Intent(this, CheckEmailService.class);
+        messageServiceIntent = new Intent(this, CheckEmailService.class);
         messageServiceIntent.putExtra("receiverTag", mReceiver);
         startService(messageServiceIntent);
         //Log.d("sohail","received result from Service="+resultData.getString("ServiceTag"));
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService(messageServiceIntent);
+        appDatabase.appDao().updateUser(usr);
+        appDatabase.close();
+        super.onDestroy();
     }
 }
