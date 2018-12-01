@@ -34,8 +34,7 @@ public class MainActivity extends AppCompatActivity implements MessageResultRece
     public MessageResultReceiver mReceiver;
     public static int loginCheck = 0;
     public static int currCheck = 0;
-    public Intent messageServiceIntent;
-
+    public Intent messageServiceIntent = null;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -104,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements MessageResultRece
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        System.out.println("on new intent");
         setIntent(intent);
         startTransactionToDB();
     }
@@ -125,12 +125,13 @@ public class MainActivity extends AppCompatActivity implements MessageResultRece
             } else {
                 usr = users.get(0);
             }
-            usr.parseEmail();
-            System.out.println("first round");
-            messageServiceIntent = new Intent(this, CheckEmailService.class);
-            //messageServiceIntent.putExtra("nameTag","sohail" );
-            messageServiceIntent.putExtra("receiverTag", mReceiver);
-            startService(messageServiceIntent);
+            if(messageServiceIntent == null) {
+                System.out.println("first round");
+                messageServiceIntent = new Intent(this, CheckEmailService.class);
+                //messageServiceIntent.putExtra("nameTag","sohail" );
+                messageServiceIntent.putExtra("receiverTag", mReceiver);
+                startService(messageServiceIntent);
+            }
             fragmentManager.beginTransaction().add(R.id.fragment_container, new DashboardActivity(), "DashboardLayout").commit();
 
         }
@@ -148,9 +149,13 @@ public class MainActivity extends AppCompatActivity implements MessageResultRece
             if(tempFragment != null) {
                 tempFragment.RefreshLayout();
             }
+            else {
+                System.out.println("in main, dashboardfragment null");
+            }
         }
         messageServiceIntent = new Intent(this, CheckEmailService.class);
         messageServiceIntent.putExtra("receiverTag", mReceiver);
+        System.out.println("another round");
         startService(messageServiceIntent);
         //Log.d("sohail","received result from Service="+resultData.getString("ServiceTag"));
 

@@ -35,9 +35,9 @@ public class FavEmailActivity extends Fragment {
         ArrayList<UserEmail> mails = MainActivity.usr.getUserEmails();
         String info = "";
         System.out.println("size: " + mails.size());
-        for(UserEmail toDisplay : mails) {
-            if(toDisplay.getFavNot() == 1) {
-                info += "\n\n" + toDisplay.getSender() + "\n" + toDisplay.getSubject() + "\n" + toDisplay.getContent();
+        for(int i = mails.size() - 1; i >= 0; i--) {
+            if(mails.get(i).getFavNot() == 1) {
+                info += "\n\n" + mails.get(i).getSender() + "\n" + mails.get(i).getSubject() + "\n" + mails.get(i).getContent();
             }
         }
         displayEmail.setText(info);

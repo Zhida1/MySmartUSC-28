@@ -326,6 +326,18 @@ public class LoginActivity extends AppCompatActivity {
                             NotificationCompat.Builder builder = appNotification.getAppChannelNotification(toSend.getSender(), toSend.getSubject());
                             appNotification.getManager().notify(new Random().nextInt(), builder.build());
                         }
+                        if(MainActivity.fragmentManager != null) {
+                            DashboardActivity aFragment = (DashboardActivity) MainActivity.fragmentManager.findFragmentByTag("DashboardLayout");
+                            if(aFragment != null) {
+                                aFragment.RefreshLayout();
+                            }
+                            else {
+                                System.out.println("in login, dashboardfragment null");
+                            }
+                        }
+                        else {
+                            System.out.println("FragmentManager NULL");
+                        }
                         MainActivity.loginCheck = 1;
 
 
@@ -405,6 +417,7 @@ public class LoginActivity extends AppCompatActivity {
             // launch our main activity
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             Intent toDashBoardActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
+            System.out.println("LoginSendingData");
             toDashBoardActivityIntent.putExtra("callMethod", "startTransaction");
             startActivity(toDashBoardActivityIntent);
         }

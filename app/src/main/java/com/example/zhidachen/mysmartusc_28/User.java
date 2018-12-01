@@ -150,7 +150,7 @@ public class User {
 
     public String displayTextNotifc() {
         String text = "";
-        for(int i = 0; i < notifications.size(); i++) {
+        for(int i = notifications.size() - 1; i >= 0; i--) {
             text += "\n\n" + "New Email from: " + notifications.get(i).getSender() + "\nSubject: " + notifications.get(i).getSubject() + "\nType: " + notifications.get(i).getType();
         }
         return text;
