@@ -249,7 +249,7 @@ public class LoginActivity extends AppCompatActivity {
                             // get single message
                             Message single_message = MainActivity.service.users().messages().get("me", userId).execute();
                             MessagePart part = single_message.getPayload();
-                            Log.w("Inside:", single_message.toString());
+                            Log.w("Inside:", i + "th message:" + single_message.toString());
                             if(single_message.toString().indexOf("UNREAD") == -1) {
                                 Log.w("Read: ", "proceed to next");
                                 continue;
@@ -261,18 +261,20 @@ public class LoginActivity extends AppCompatActivity {
                                 byte[] bodyBytes = Base64.decodeBase64(single_message.getPayload().getBody().getData());
                                 String bd = new String(bodyBytes, "UTF-8");
                                 content = bd;
-                                Log.w("Inside Gmail ", "1: ");
+                                Log.w("Inside Gmail 1", content);
                                 List<MessagePartHeader> headers = single_message.getPayload().getHeaders();
+
                                 boolean gotSender = false;
                                 boolean gotSubject = false;
                                 if(headers != null) {
                                     for (int j = 0; j < headers.size(); j++) {
-                                        if (headers.get(j).getName().equals("From")) {
+
+                                        if (headers.get(j).getName().contains("From")) {
                                             sender = headers.get(j).getValue();
                                             Log.w("Sender: ", sender);
                                             gotSender = true;
                                         }
-                                        if (headers.get(j).getName().equals("Subject")) {
+                                        if (headers.get(j).getName().contains("Subject")) {
                                             subject = headers.get(j).getValue();
                                             Log.w("Subject: ", subject);
                                             gotSubject = true;
@@ -290,7 +292,7 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 String msg = StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getPayload().getParts().get(0).getBody().getData()));
                                 content = msg;
-                                Log.w("Inside Gmail ", "2: ");
+                                // Log.w("Inside Gmail ", "2: ");
                                 //Log.w("Inside Gmail message:", StringUtils.newStringUtf8(Base64.decodeBase64(single_message.getRaw()))); need to call setFormat("raw")
 
                                 // get sender from header
